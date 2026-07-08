@@ -7,15 +7,17 @@ import 'package:persian_datetime_picker/widget/dialog.dart';
 import 'handle_picker.dart';
 
 class PersianDateTimePicker extends StatefulWidget {
-  final initial;
-  final type;
-  final disable;
+  final dynamic initial;
+  final dynamic type;
+  final dynamic disable;
   final Color color;
-  final Function(String) onSelect;
-  PersianDateTimePicker(
-      {this.type = 'date',
-      this.initial = null,
-      this.disable = null,
+  final Function(String)? onSelect;
+
+  const PersianDateTimePicker(
+      {super.key,
+      this.type = 'date',
+      this.initial,
+      this.disable,
       this.color = Colors.blueAccent,
       this.onSelect});
 
@@ -26,7 +28,6 @@ class PersianDateTimePicker extends StatefulWidget {
 class _PersianDateTimePickerState extends State<PersianDateTimePicker> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Global.color = widget.color;
     Global.pickerType = widget.type;
@@ -38,7 +39,7 @@ class _PersianDateTimePickerState extends State<PersianDateTimePicker> {
     return SingleChildScrollView(
       child: CDialog(
         insetAnimationCurve: Curves.bounceInOut,
-        insetAnimationDuration: Duration(seconds: 2),
+        insetAnimationDuration: const Duration(seconds: 2),
         child: HandlePicker(
           type: widget.type,
           initDateTime: widget.initial,

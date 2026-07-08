@@ -1,38 +1,39 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:persian_datetime_picker/utils/consts.dart';
 import 'package:persian_datetime_picker/utils/date.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class DayContainer extends StatefulWidget {
-  final date;
-  final startDate;
-  final endDate;
-  final Function(Jalali) onSelect;
-  final width;
-  final height;
+  final dynamic date;
+  final dynamic startDate;
+  final dynamic endDate;
+  final Function(Jalali)? onSelect;
+  final dynamic width;
+  final dynamic height;
 
-  DayContainer(
-      {this.date,
+  const DayContainer(
+      {super.key,
+      this.date,
       this.startDate,
       this.endDate,
       this.onSelect,
       this.height,
       this.width});
+
   @override
   _DayContainerState createState() => _DayContainerState();
 }
 
 class _DayContainerState extends State<DayContainer> {
   var date;
-  bool isDisable;
+  bool isDisable = false;
 
   @override
   void initState() {
     date = widget.date;
-    var dateUtiles = new DateUtils();
+    var dateUtiles = DateUtils();
     isDisable = date != '' ? dateUtiles.isDisable(outPutFormat(date)) : false;
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -46,7 +47,7 @@ class _DayContainerState extends State<DayContainer> {
   void didUpdateWidget(DayContainer oldWidget) {
     if (oldWidget != widget) {
       date = widget.date;
-      var dateUtiles = new DateUtils();
+      var dateUtiles = DateUtils();
       isDisable = date != '' ? dateUtiles.isDisable(outPutFormat(date)) : false;
     }
     super.didUpdateWidget(oldWidget);
@@ -68,11 +69,12 @@ class _DayContainerState extends State<DayContainer> {
           boxShadow: [
             BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                offset: Offset(0.0, 2.0),
+                offset: const Offset(0.0, 2.0),
                 spreadRadius: 1.0,
                 blurRadius: 1.0)
           ],
-          borderRadius: BorderRadius.horizontal(right: Radius.circular(50.0)));
+          borderRadius:
+              const BorderRadius.horizontal(right: Radius.circular(50.0)));
     }
     if (isEnd) {
       decoration = BoxDecoration(
@@ -80,11 +82,12 @@ class _DayContainerState extends State<DayContainer> {
           boxShadow: [
             BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                offset: Offset(0.0, 4.0),
+                offset: const Offset(0.0, 4.0),
                 spreadRadius: -2.0,
                 blurRadius: 1.0)
           ],
-          borderRadius: BorderRadius.horizontal(left: Radius.circular(50.0)));
+          borderRadius:
+              const BorderRadius.horizontal(left: Radius.circular(50.0)));
     }
     if (isEnd && isStart) {
       decoration = BoxDecoration(
@@ -92,11 +95,11 @@ class _DayContainerState extends State<DayContainer> {
           boxShadow: [
             BoxShadow(
                 color: Colors.black.withOpacity(0.3),
-                offset: Offset(0.0, 4.0),
+                offset: const Offset(0.0, 4.0),
                 spreadRadius: -2.0,
                 blurRadius: 1.0)
           ],
-          borderRadius: BorderRadius.all(Radius.circular(50.0)));
+          borderRadius: const BorderRadius.all(Radius.circular(50.0)));
     }
     if (isBetween) {
       decoration = BoxDecoration(
@@ -104,7 +107,7 @@ class _DayContainerState extends State<DayContainer> {
         boxShadow: [
           BoxShadow(
               color: Colors.black.withOpacity(0.3),
-              offset: Offset(0.0, 4.0),
+              offset: const Offset(0.0, 4.0),
               spreadRadius: -2.0,
               blurRadius: 1.0)
         ],
@@ -114,19 +117,19 @@ class _DayContainerState extends State<DayContainer> {
     return InkWell(
       onTap: () {
         if (date != '' && !isDisable) {
-          widget.onSelect(date);
+          widget.onSelect?.call(date);
         }
       },
       child: date != ''
           ? Container(
               decoration: decoration,
-              width: widget.width,
-              height: widget.height,
+              width: widget.width?.toDouble(),
+              height: widget.height?.toDouble(),
               child: Container(
-                margin: EdgeInsets.all(3),
+                margin: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                     color: isStart || isEnd ? Colors.white : Colors.transparent,
-                    borderRadius: BorderRadius.all(Radius.circular(50))),
+                    borderRadius: const BorderRadius.all(Radius.circular(50))),
                 child: Center(
                   child: Text(
                     date != '' ? date.formatter.d : '',
@@ -140,8 +143,8 @@ class _DayContainerState extends State<DayContainer> {
               ),
             )
           : Container(
-              width: widget.width,
-              height: widget.height,
+              width: widget.width?.toDouble(),
+              height: widget.height?.toDouble(),
             ),
     );
   }
