@@ -76,18 +76,15 @@ class DateUtils {
     List<int> splitTime2 = time2.split(':').map(int.parse).toList();
     if (splitTime1[0] > splitTime2[0]) return 1;
     if (splitTime1[0] < splitTime2[0]) return -1;
-    if (splitTime1[0] == splitTime2[0]) {
-      if (splitTime1[1] > splitTime2[1]) return 1;
-      if (splitTime1[1] < splitTime2[1]) return -1;
-      if (splitTime1[1] == splitTime2[1]) return 0;
-    }
+    if (splitTime1[1] > splitTime2[1]) return 1;
+    if (splitTime1[1] < splitTime2[1]) return -1;
+    return 0;
   }
 
   static Jalali stringToJalali(String date) {
     List split = date.split('/');
     return Jalali(
-            int.parse(split[0]), int.parse(split[1]), int.parse(split[2])) ??
-        Jalali.now();
+        int.parse(split[0]), int.parse(split[1]), int.parse(split[2]));
   }
 
   static String jalaliToString(Date date) {

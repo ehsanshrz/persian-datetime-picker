@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:persian_datetime_picker/utils/consts.dart';
 import 'package:persian_datetime_picker/utils/date.dart';
 import 'package:persian_datetime_picker/widget/partition.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class PersianMonthPicker extends StatefulWidget {
-  final initDate;
-  final Function(Jalali) onSelectMonth;
+  final dynamic initDate;
+  final Function(Jalali)? onSelectMonth;
 
-  PersianMonthPicker({this.initDate, this.onSelectMonth});
+  const PersianMonthPicker({super.key, this.initDate, this.onSelectMonth});
 
   @override
   _PersianMonthPickerState createState() => _PersianMonthPickerState();
@@ -16,11 +16,12 @@ class PersianMonthPicker extends StatefulWidget {
 
 class _PersianMonthPickerState extends State<PersianMonthPicker>
     with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
-  int selectedMonth;
-  List months;
-  var initDate;
+  late AnimationController controller;
+  late Animation<double> animation;
+  int selectedMonth = 1;
+  List months = [];
+  late Jalali initDate;
+
   String monthNFormat(Date d) {
     final f = d.formatter;
 
@@ -33,7 +34,6 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
     });
   }
 
-  
   String outPutFormat(Date d) {
     final f = d.formatter;
 
@@ -48,8 +48,7 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
       var splitInitDate = widget.initDate.split('#');
       var splitStartDate = splitInitDate[0].split('/');
       initDate = Jalali(int.parse(splitStartDate[0]),
-              int.parse(splitStartDate[1]), int.parse(splitStartDate[2])) ??
-          Jalali.now();
+          int.parse(splitStartDate[1]), int.parse(splitStartDate[2]));
 
       selectedMonth = initDate.month;
     } else {
@@ -58,11 +57,17 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
     }
 
     _makeMonthList();
+    controller =
+        AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeInOut)
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> monthList = months.map((month) {
+    List<Widget> monthList = months.map<Widget>((month) {
       BoxDecoration decoration = BoxDecoration();
       if (initDate.month == month) {
         decoration = BoxDecoration(
@@ -70,13 +75,13 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
             boxShadow: [
               BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-                  offset: Offset(0.0, 4.0),
+                  offset: const Offset(0.0, 4.0),
                   spreadRadius: -2.0,
                   blurRadius: 1.0)
             ],
-            borderRadius: BorderRadius.all(Radius.circular(50.0)));
+            borderRadius: const BorderRadius.all(Radius.circular(50.0)));
       }
-      var dateUtiles = new DateUtils();
+      var dateUtiles = DateUtils();
       bool isDisable = dateUtiles.isDisable('$month');
       return GestureDetector(
         onTap: () {
@@ -86,14 +91,14 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
         },
         child: Container(
           decoration: decoration,
-          margin: EdgeInsets.all(5),
-          padding: EdgeInsets.all(3),
+          margin: const EdgeInsets.all(5),
+          padding: const EdgeInsets.all(3),
           child: Container(
-            padding: EdgeInsets.all(3),
+            padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
                 color:
                     initDate.month == month ? Colors.white : Colors.transparent,
-                borderRadius: BorderRadius.all(Radius.circular(50))),
+                borderRadius: const BorderRadius.all(Radius.circular(50))),
             child: Center(
               child: Text(
                 '${monthNFormat(initDate.copy(month: month))}',
@@ -113,10 +118,10 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
 
     List rows = chunks.map((row) {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 3),
+        padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: row,
+          children: row as List<Widget>,
         ),
       );
     }).toList();
@@ -127,7 +132,7 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
         children: <Widget>[
           Container(
               width: double.infinity,
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: Global.color,
               ),
@@ -137,16 +142,16 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
                   Text(
                     '${monthNFormat(initDate)}',
                     textAlign: TextAlign.right,
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                    style: const TextStyle(color: Colors.white, fontSize: 25),
                   ),
                 ],
               )),
           Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: rows,
+              children: rows as List<Widget>,
             ),
           ),
           Container(
@@ -154,35 +159,35 @@ class _PersianMonthPickerState extends State<PersianMonthPicker>
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    widget.onSelectMonth?.call(initDate);
+                  },
                   child: Text(
                     'تایید',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    widget.onSelectMonth(initDate);
-                  },
                 ),
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     'انصراف',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                FlatButton(
-                  child: Text(
-                    'اکنون',
-                    style: TextStyle(fontSize: 16, color: Global.color),
-                  ),
+                TextButton(
                   onPressed: () {
                     setState(() {
                       initDate = Jalali.now();
                       selectedMonth = initDate.month;
                     });
                   },
+                  child: Text(
+                    'اکنون',
+                    style: TextStyle(fontSize: 16, color: Global.color),
+                  ),
                 ),
               ],
             ),

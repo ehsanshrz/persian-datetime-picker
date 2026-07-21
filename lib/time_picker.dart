@@ -1,32 +1,32 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:persian_datetime_picker/utils/consts.dart';
 import 'package:persian_datetime_picker/utils/date.dart';
 
 class TimePicker extends StatefulWidget {
-  final initTime;
-  final Function(String) onSelectDate;
+  final dynamic initTime;
+  final Function(String)? onSelectDate;
 
-  TimePicker({this.initTime, this.onSelectDate});
+  const TimePicker({super.key, this.initTime, this.onSelectDate});
 
   @override
   _TimePickerState createState() => _TimePickerState();
 }
 
 class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
+  late AnimationController controller;
+  late Animation<double> animation;
   var initHour;
   var initMinute;
   String changeState = 'hour';
   bool isSlideForward = true;
-  var dateUtiles = new DateUtils();
+  var dateUtiles = DateUtils();
   bool isDisable = false;
 
   @override
   void initState() {
     super.initState();
     if (widget.initTime == null) {
-      var now = new DateTime.now();
+      var now = DateTime.now();
       initHour = now.hour;
       initMinute = now.minute;
     } else {
@@ -36,7 +36,7 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
     }
     isDisable = dateUtiles.isDisable('$initHour:$initMinute');
     controller =
-        AnimationController(duration: Duration(milliseconds: 150), vsync: this);
+        AnimationController(duration: const Duration(milliseconds: 150), vsync: this);
     animation = CurvedAnimation(parent: controller, curve: Curves.easeInOut)
       ..addListener(() {
         setState(() {});
@@ -58,7 +58,7 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
           initHour = initHour < 24 ? initHour + 1 : 0;
           break;
         case 'now':
-          var now = new DateTime.now();
+          var now = DateTime.now();
           initHour = now.hour;
           initMinute = now.minute;
           break;
@@ -70,8 +70,6 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
           isSlideForward = type == 'prev' ? false : true;
           isDisable = dateUtiles.isDisable('$initHour:$initMinute');
           controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          // controller.forward();
         }
       });
     });
@@ -92,7 +90,7 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
           initMinute = initMinute < 59 ? initMinute + 1 : 0;
           break;
         case 'now':
-          var now = new DateTime.now();
+          var now = DateTime.now();
           initHour = now.hour;
           initMinute = now.minute;
           break;
@@ -103,8 +101,6 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
           isSlideForward = type == 'prev' ? false : true;
           isDisable = dateUtiles.isDisable('$initHour:$initMinute');
           controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          // controller.forward();
         }
       });
     });
@@ -118,7 +114,7 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
         children: <Widget>[
           Container(
               width: double.infinity,
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: Global.color,
               ),
@@ -128,12 +124,12 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                   Text(
                     '$initHour:$initMinute',
                     textAlign: TextAlign.right,
-                    style: TextStyle(color: Colors.white, fontSize: 25),
+                    style: const TextStyle(color: Colors.white, fontSize: 25),
                   ),
                 ],
               )),
           Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -144,15 +140,15 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                     Container(
                       child: Column(
                         children: <Widget>[
-                          FlatButton(
+                          TextButton(
+                            onPressed: () {
+                              _changeMinute('next');
+                            },
                             child: Icon(
                               Icons.expand_less,
                               size: 50,
                               color: Colors.grey,
                             ),
-                            onPressed: () {
-                              _changeMinute('next');
-                            },
                           ),
                           Transform(
                             transform: Matrix4.translationValues(
@@ -177,15 +173,15 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                               ),
                             ),
                           ),
-                          FlatButton(
+                          TextButton(
+                            onPressed: () {
+                              _changeMinute('prev');
+                            },
                             child: Icon(
                               Icons.expand_more,
                               size: 50,
                               color: Colors.grey,
                             ),
-                            onPressed: () {
-                              _changeMinute('prev');
-                            },
                           ),
                         ],
                       ),
@@ -202,15 +198,15 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                     Container(
                       child: Column(
                         children: <Widget>[
-                          FlatButton(
+                          TextButton(
+                            onPressed: () {
+                              _changeHour('next');
+                            },
                             child: Icon(
                               Icons.expand_less,
                               size: 50,
                               color: Colors.grey,
                             ),
-                            onPressed: () {
-                              _changeHour('next');
-                            },
                           ),
                           Transform(
                             transform: Matrix4.translationValues(
@@ -235,15 +231,15 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                               ),
                             ),
                           ),
-                          FlatButton(
+                          TextButton(
+                            onPressed: () {
+                              _changeHour('prev');
+                            },
                             child: Icon(
                               Icons.expand_more,
                               size: 50,
                               color: Colors.grey,
                             ),
-                            onPressed: () {
-                              _changeHour('prev');
-                            },
                           ),
                         ],
                       ),
@@ -258,7 +254,10 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    if (!isDisable) widget.onSelectDate?.call('$initHour:$initMinute');
+                  },
                   child: Text(
                     'تایید',
                     style: TextStyle(
@@ -267,28 +266,24 @@ class _TimePickerState extends State<TimePicker> with TickerProviderStateMixin {
                             ? Global.color.withOpacity(0.5)
                             : Global.color),
                   ),
-                  onPressed: () {
-                    if (!isDisable)
-                      widget.onSelectDate('$initHour:$initMinute');
-                  },
                 ),
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     'انصراف',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    _changeHour('now');
+                  },
                   child: Text(
                     'اکنون',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    _changeHour('now');
-                  },
                 ),
               ],
             ),

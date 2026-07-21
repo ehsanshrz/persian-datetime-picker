@@ -6,17 +6,16 @@ import 'package:persian_datetime_picker/utils/consts.dart';
 import 'package:persian_datetime_picker/utils/date.dart';
 import 'package:persian_datetime_picker/widget/snack_bar.dart';
 import 'package:persian_datetime_picker/year_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:shamsi_date/shamsi_date.dart';
 
 class HandlePicker extends StatefulWidget {
-  final bool isRangeDate;
-  final initDateTime;
-  final type;
-  final Function(String) onSelect;
+  final bool? isRangeDate;
+  final dynamic initDateTime;
+  final dynamic type;
+  final Function(String)? onSelect;
 
-  HandlePicker({this.isRangeDate, this.initDateTime, this.type, this.onSelect});
+  const HandlePicker({super.key, this.isRangeDate, this.initDateTime, this.type, this.onSelect});
 
   @override
   _HandlePickerState createState() => _HandlePickerState();
@@ -24,18 +23,13 @@ class HandlePicker extends StatefulWidget {
 
 class _HandlePickerState extends State<HandlePicker>
     with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
+  dynamic startSelectedInitDate;
+  dynamic startSelectedInitTime;
+  dynamic endSelectedInitDate;
+  dynamic endSelectedInitTime;
+  dynamic initDateTime;
 
-  // var initDate;
-  // var initTime;
-  var startSelectedInitDate;
-  var startSelectedInitTime;
-  var endSelectedInitDate;
-  var endSelectedInitTime;
-  var initDateTime;
-
-  bool isSecondSelect;
+  bool isSecondSelect = false;
   String pickerType = 'date';
 
   String outPutFormat(Date d) {
@@ -151,7 +145,7 @@ class _HandlePickerState extends State<HandlePicker>
             picked = TimePicker(
               initTime: startSelectedInitTime,
               onSelectDate: (time) {
-                widget.onSelect('$startSelectedInitDate $time');
+                widget.onSelect?.call('$startSelectedInitDate $time');
                 Navigator.of(context).pop();
               },
             );
@@ -169,6 +163,7 @@ class _HandlePickerState extends State<HandlePicker>
             );
             break;
           default:
+            picked = const SizedBox.shrink();
         }
         picker = Container(child: picked);
         break;
@@ -186,16 +181,15 @@ class _HandlePickerState extends State<HandlePicker>
               },
               isRangeDate: true,
               onConfirmedDate: (date) {
-                widget.onSelect(date);
+                widget.onSelect?.call(date);
                 Navigator.of(context).pop();
               },
               onSelectDate: (date) {
                 var splitStartDate = startSelectedInitDate.split('/');
                 var startSelectedDate = Jalali(
-                        int.parse(splitStartDate[0]),
-                        int.parse(splitStartDate[1]),
-                        int.parse(splitStartDate[2])) ??
-                    Jalali.now();
+                    int.parse(splitStartDate[0]),
+                    int.parse(splitStartDate[1]),
+                    int.parse(splitStartDate[2]));
                 setState(() {
                   if (!isSecondSelect) {
                     startSelectedInitDate = outPutFormat(date);
@@ -224,7 +218,7 @@ class _HandlePickerState extends State<HandlePicker>
             picked = TimePicker(
               initTime: startSelectedInitTime,
               onSelectDate: (time) {
-                widget.onSelect('$startSelectedInitDate $time');
+                widget.onSelect?.call('$startSelectedInitDate $time');
                 Navigator.of(context).pop();
               },
             );
@@ -245,6 +239,7 @@ class _HandlePickerState extends State<HandlePicker>
             );
             break;
           default:
+            picked = const SizedBox.shrink();
         }
         picker = Container(child: picked);
         break;
@@ -256,7 +251,7 @@ class _HandlePickerState extends State<HandlePicker>
             child: TimePicker(
           initTime: startSelectedInitTime,
           onSelectDate: (time) {
-            widget.onSelect('$time');
+            widget.onSelect?.call('$time');
             Navigator.pop(context);
           },
         ));
@@ -272,7 +267,7 @@ class _HandlePickerState extends State<HandlePicker>
               isRangeDate: false,
               onConfirmedDate: (date) {
                 startSelectedInitDate = date;
-                widget.onSelect('$startSelectedInitDate');
+                widget.onSelect?.call('$startSelectedInitDate');
                 Navigator.pop(context);
               },
               onSelectDate: (date) {
@@ -295,7 +290,6 @@ class _HandlePickerState extends State<HandlePicker>
                 setState(() {
                   startSelectedInitDate = outPutFormat(date);
                   endSelectedInitDate = outPutFormat(date);
-                  startSelectedInitDate = outPutFormat(date);
                   pickerType = 'date';
                 });
               },
@@ -313,13 +307,13 @@ class _HandlePickerState extends State<HandlePicker>
                 setState(() {
                   startSelectedInitDate = outPutFormat(date);
                   endSelectedInitDate = outPutFormat(date);
-                  startSelectedInitDate = outPutFormat(date);
                   pickerType = 'date';
                 });
               },
             );
             break;
           default:
+            picked = const SizedBox.shrink();
         }
         picker = Container(child: picked);
         break;
@@ -330,7 +324,7 @@ class _HandlePickerState extends State<HandlePicker>
               Jalali.now().copy(year: int.parse(startSelectedInitDate))),
           onSelectYear: (date) {
             startSelectedInitDate = outPutFormat(date);
-            widget.onSelect('${date.formatter.yyyy}');
+            widget.onSelect?.call('${date.formatter.yyyy}');
             Navigator.pop(context);
           },
         ));
@@ -341,7 +335,7 @@ class _HandlePickerState extends State<HandlePicker>
               Jalali.now().copy(month: int.parse(startSelectedInitDate))),
           onSelectMonth: (date) {
             startSelectedInitDate = outPutFormat(date);
-            widget.onSelect('${date.formatter.mm}');
+            widget.onSelect?.call('${date.formatter.mm}');
             Navigator.pop(context);
           },
         );
@@ -357,7 +351,7 @@ class _HandlePickerState extends State<HandlePicker>
               isRangeDate: false,
               onConfirmedDate: (date) {
                 startSelectedInitDate = date;
-                widget.onSelect('$startSelectedInitDate');
+                widget.onSelect?.call('$startSelectedInitDate');
                 Navigator.pop(context);
               },
               onSelectDate: (date) {
@@ -380,7 +374,6 @@ class _HandlePickerState extends State<HandlePicker>
                 setState(() {
                   startSelectedInitDate = outPutFormat(date);
                   endSelectedInitDate = outPutFormat(date);
-                  startSelectedInitDate = outPutFormat(date);
                   pickerType = 'date';
                 });
               },
@@ -398,13 +391,13 @@ class _HandlePickerState extends State<HandlePicker>
                 setState(() {
                   startSelectedInitDate = outPutFormat(date);
                   endSelectedInitDate = outPutFormat(date);
-                  startSelectedInitDate = outPutFormat(date);
                   pickerType = 'date';
                 });
               },
             );
             break;
           default:
+            picked = const SizedBox.shrink();
         }
         picker = Container(child: picked);
         break;

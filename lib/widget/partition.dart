@@ -20,12 +20,12 @@ class _Partition<T> extends IterableBase<List<T>> {
 class _PartitionIterator<T> implements Iterator<List<T>> {
   final Iterator<T> _iterator;
   final int _size;
-  List<T> _current;
+  List<T>? _current;
 
   _PartitionIterator(this._iterator, this._size);
 
   @override
-  List<T> get current => _current;
+  List<T> get current => _current!;
 
   @override
   bool moveNext() {

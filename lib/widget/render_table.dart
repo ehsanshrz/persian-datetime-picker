@@ -4,29 +4,29 @@ import 'package:persian_datetime_picker/widget/partition.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 
 class RenderTable extends StatefulWidget {
-  final initDate;
-  final startSelectedDate;
-  final endSelectedDate;
-  final Function(Jalali) onSelect;
+  final dynamic initDate;
+  final dynamic startSelectedDate;
+  final dynamic endSelectedDate;
+  final Function(Jalali)? onSelect;
 
-  RenderTable({
+  const RenderTable({
+    super.key,
     this.initDate,
     this.startSelectedDate,
     this.endSelectedDate,
     this.onSelect,
   });
+
   @override
   _RenderTableState createState() => _RenderTableState();
 }
 
 class _RenderTableState extends State<RenderTable> {
   var initDate;
-  int monthLength;
-  int currentDayOfMonth;
-  int numberOfFirstDayOfMonthInWeek;
-  List allDaysOfTable; //valid and invalid days
-
-
+  late int monthLength;
+  late int currentDayOfMonth;
+  late int numberOfFirstDayOfMonthInWeek;
+  List allDaysOfTable = [];
 
   @override
   void didUpdateWidget(RenderTable oldWidget) {
@@ -72,14 +72,12 @@ class _RenderTableState extends State<RenderTable> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final cellWidth = 42.0;
-    final cellHeight = 35.0;
+    const cellWidth = 42.0;
+    const cellHeight = 35.0;
 
-
-    List<Widget> allDaysWidget = allDaysOfTable.map((dayNumber) {
+    List<Widget> allDaysWidget = allDaysOfTable.map<Widget>((dayNumber) {
       var date = dayNumber != '' ? initDate.copy(day: dayNumber) : '';
       return DayContainer(
         date: date,
@@ -88,7 +86,7 @@ class _RenderTableState extends State<RenderTable> {
         width: cellWidth,
         height: cellHeight,
         onSelect: (date) {
-          widget.onSelect(date);
+          widget.onSelect?.call(date);
         },
       );
     }).toList();
@@ -97,10 +95,10 @@ class _RenderTableState extends State<RenderTable> {
 
     List chunkWeeksWidget = chunkAllDays.map((week) {
       return Container(
-        padding: EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: week,
+          children: week as List<Widget>,
         ),
       );
     }).toList();
@@ -110,7 +108,7 @@ class _RenderTableState extends State<RenderTable> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Column(
-          children: chunkWeeksWidget,
+          children: chunkWeeksWidget as List<Widget>,
         )
       ],
     );

@@ -1,25 +1,25 @@
 import 'package:persian_datetime_picker/utils/consts.dart';
 import 'package:persian_datetime_picker/widget/render_table.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide DateUtils;
 import 'package:shamsi_date/shamsi_date.dart';
 
 class DatePicker extends StatefulWidget {
-  final bool isRangeDate;
+  final bool? isRangeDate;
   final bool isSecondDate;
-  final startSelectedDate;
-  final endSelectedDate;
-  final Function(dynamic) onSelectDate;
-  final Function(String) onConfirmedDate;
-  final Function(String) onChangePicker;
+  final dynamic startSelectedDate;
+  final dynamic endSelectedDate;
+  final Function(dynamic)? onSelectDate;
+  final Function(String)? onConfirmedDate;
+  final Function(String)? onChangePicker;
 
-  DatePicker(
-      {this.isRangeDate,
+  const DatePicker(
+      {super.key,
+      this.isRangeDate,
       this.startSelectedDate = false,
       this.isSecondDate = false,
       this.endSelectedDate,
-      this.onChangePicker = null,
-      this.onSelectDate = null,
+      this.onChangePicker,
+      this.onSelectDate,
       this.onConfirmedDate});
 
   @override
@@ -27,13 +27,13 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
-  AnimationController controller;
-  Animation<double> animation;
+  late AnimationController controller;
+  late Animation<double> animation;
 
-  Jalali initDate;
-  Jalali startSelectedDate;
-  Jalali endSelectedDate;
-  bool isRangeDate;
+  late Jalali initDate;
+  Jalali? startSelectedDate;
+  Jalali? endSelectedDate;
+  bool isRangeDate = false;
 
   bool isSlideForward = true;
 
@@ -49,24 +49,20 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
 
   @override
   void didUpdateWidget(DatePicker oldWidget) {
-    // TODO: implement didUpdateWidget
     super.didUpdateWidget(oldWidget);
     if (oldWidget != widget) {
       setState(() {
-        isRangeDate = widget.isRangeDate;
+        isRangeDate = widget.isRangeDate ?? false;
         if (widget.endSelectedDate != null) {
           var splitStartDate = widget.startSelectedDate.split('/');
           var splitEndDate = widget.endSelectedDate.split('/');
           startSelectedDate = Jalali(int.parse(splitStartDate[0]),
-                  int.parse(splitStartDate[1]), int.parse(splitStartDate[2])) ??
-              Jalali.now();
+              int.parse(splitStartDate[1]), int.parse(splitStartDate[2]));
           endSelectedDate = Jalali(int.parse(splitEndDate[0]),
-                  int.parse(splitEndDate[1]), int.parse(splitEndDate[2])) ??
-              Jalali.now();
+              int.parse(splitEndDate[1]), int.parse(splitEndDate[2]));
 
           initDate = startSelectedDate = Jalali(int.parse(splitStartDate[0]),
-                  int.parse(splitStartDate[1]), int.parse(splitStartDate[2])) ??
-              Jalali.now();
+              int.parse(splitStartDate[1]), int.parse(splitStartDate[2]));
         }
       });
     }
@@ -74,7 +70,6 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     controller.dispose();
   }
@@ -82,24 +77,25 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    isRangeDate = widget.isRangeDate;
+    isRangeDate = widget.isRangeDate ?? false;
     if (widget.endSelectedDate != null) {
       var splitStartDate = widget.startSelectedDate.split('/');
       var splitEndDate = widget.endSelectedDate.split('/');
       startSelectedDate = Jalali(int.parse(splitStartDate[0]),
-              int.parse(splitStartDate[1]), int.parse(splitStartDate[2])) ??
-          Jalali.now();
+          int.parse(splitStartDate[1]), int.parse(splitStartDate[2]));
       endSelectedDate = Jalali(int.parse(splitEndDate[0]),
-              int.parse(splitEndDate[1]), int.parse(splitEndDate[2])) ??
-          Jalali.now();
+          int.parse(splitEndDate[1]), int.parse(splitEndDate[2]));
 
       initDate = startSelectedDate = Jalali(int.parse(splitStartDate[0]),
-              int.parse(splitStartDate[1]), int.parse(splitStartDate[2])) ??
-          Jalali.now();
+          int.parse(splitStartDate[1]), int.parse(splitStartDate[2]));
+    } else {
+      initDate = Jalali.now();
+      startSelectedDate = Jalali.now();
+      endSelectedDate = Jalali.now();
     }
 
     controller =
-        AnimationController(duration: Duration(milliseconds: 300), vsync: this);
+        AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
 
     animation = CurvedAnimation(parent: controller, curve: Curves.easeInOut)
       ..addListener(() {
@@ -112,7 +108,6 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
       controller.forward(from: 0);
       int year = int.parse(initDate.formatter.y);
       int month = int.parse(initDate.formatter.m);
-      int day = int.parse(initDate.formatter.d);
       var newDate = initDate;
       switch (type) {
         case 'prev':
@@ -141,8 +136,6 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
 
           isSlideForward = type == 'prev' ? false : true;
           controller.reverse();
-        } else if (status == AnimationStatus.dismissed) {
-          // controller.forward();
         }
       });
     });
@@ -174,8 +167,8 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final cellWidth = 42.0;
-    final cellHeight = 35.0;
+    const cellWidth = 42.0;
+    const cellHeight = 35.0;
     List weekDaysWidget = weekDaysName.map((day) {
       return Container(
         width: cellWidth,
@@ -183,7 +176,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
         child: Text(
           day,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: Colors.grey),
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
         ),
       );
     }).toList();
@@ -195,7 +188,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
         children: <Widget>[
           Container(
               width: double.infinity,
-              padding: EdgeInsets.all(15),
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
                 color: Global.color,
               ),
@@ -204,14 +197,14 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          'از ${fullFormat(startSelectedDate)}',
+                          'از ${fullFormat(startSelectedDate!)}',
                           textAlign: TextAlign.right,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Text(
-                          'تا ${fullFormat(endSelectedDate)}',
+                          'تا ${fullFormat(endSelectedDate!)}',
                           textAlign: TextAlign.right,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     )
@@ -219,14 +212,14 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '${startSelectedDate.formatter.yyyy}',
+                          '${startSelectedDate!.formatter.yyyy}',
                           textAlign: TextAlign.right,
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Text(
-                          '${monthDayFormat(startSelectedDate)}',
+                          '${monthDayFormat(startSelectedDate!)}',
                           textAlign: TextAlign.right,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
@@ -234,13 +227,13 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                       ],
                     )),
           Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(bottom: 5),
+                  margin: const EdgeInsets.only(bottom: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -248,7 +241,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                         onPressed: () {
                           _changeMonth('prev');
                         },
-                        icon: Icon(Icons.chevron_left),
+                        icon: const Icon(Icons.chevron_left),
                       ),
                       GestureDetector(
                         onTap: () {},
@@ -259,9 +252,9 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                                 0),
                             child: Opacity(
                               opacity: 1 - animation.value,
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () {
-                                  widget.onChangePicker('year');
+                                  widget.onChangePicker?.call('year');
                                 },
                                 child: Text(yearMonthNFormat(initDate)),
                               ),
@@ -271,7 +264,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                         onPressed: () {
                           _changeMonth('next');
                         },
-                        icon: Icon(Icons.chevron_right),
+                        icon: const Icon(Icons.chevron_right),
                       ),
                     ],
                   ),
@@ -279,7 +272,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: weekDaysWidget,
+                    children: weekDaysWidget as List<Widget>,
                   ),
                 ),
                 Transform(
@@ -292,7 +285,7 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
                       startSelectedDate: startSelectedDate,
                       endSelectedDate: endSelectedDate,
                       onSelect: (date) {
-                        widget.onSelectDate(date);
+                        widget.onSelectDate?.call(date);
                       },
                     ),
                   ),
@@ -305,40 +298,40 @@ class _DatePickerState extends State<DatePicker> with TickerProviderStateMixin {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    if (isRangeDate) {
+                      widget.onConfirmedDate?.call(
+                          '${outPutFormat(startSelectedDate!)} # ${outPutFormat(endSelectedDate!)}');
+                    } else {
+                      widget.onConfirmedDate?.call(
+                          '${outPutFormat(startSelectedDate!)}');
+                    }
+                  },
                   child: Text(
                     'تایید',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    if (isRangeDate) {
-                      widget.onConfirmedDate(
-                          '${outPutFormat(startSelectedDate)} # ${outPutFormat(endSelectedDate)}');
-                    } else {
-                      widget.onConfirmedDate(
-                          '${outPutFormat(startSelectedDate)}');
-                    }
-                  },
                 ),
-                FlatButton(
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     'انصراف',
                     style: TextStyle(fontSize: 16, color: Global.color),
                   ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
                 ),
-                FlatButton(
-                  child: Text(
-                    'اکنون',
-                    style: TextStyle(fontSize: 16, color: Global.color),
-                  ),
+                TextButton(
                   onPressed: () {
                     startSelectedDate = Jalali.now();
                     endSelectedDate = Jalali.now();
                     _changeMonth('now');
                   },
+                  child: Text(
+                    'اکنون',
+                    style: TextStyle(fontSize: 16, color: Global.color),
+                  ),
                 ),
               ],
             ),
