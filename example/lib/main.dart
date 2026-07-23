@@ -1,7 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:persian_datetime_picker/persian_datetime_picker.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,185 +13,438 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Date and Time Pickers',
+      locale: const Locale("fa", "IR"),
+      debugShowCheckedModeBanner: false,
+      supportedLocales: const [Locale("fa", "IR"), Locale("en", "US")],
+      localizationsDelegates: const [
+        PersianMaterialLocalizations.delegate,
+        PersianCupertinoLocalizations.delegate,
+        // DariMaterialLocalizations.delegate, Dari
+        // DariCupertinoLocalizations.delegate,
+        // PashtoMaterialLocalizations.delegate, Pashto
+        // PashtoCupertinoLocalizations.delegate,
+        // SoraniMaterialLocalizations.delegate, Kurdish
+        // SoraniCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       theme: ThemeData(
-        fontFamily: 'IS',
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF43cea2)),
-        primaryColor: Colors.white,
+        fontFamily: 'Dana',
+        datePickerTheme: DatePickerThemeData(
+          // headerBackgroundColor: Color(0xffFF4893), // Header background color
+          // backgroundColor: Color(0xff121212),
+          // dayBackgroundColor: WidgetStateProperty.resolveWith<Color?>(
+          //   (Set<WidgetState> states) {
+          //     if (states.contains(WidgetState.selected)) {
+          //       return Color(0xff89ED5B); // Background color for selected day
+          //     } else if (states.contains(WidgetState.disabled)) {
+          //       return Colors
+          //           .grey.shade200; // Background color for disabled days
+          //     }
+          //     return Color(0xff121212); // Default background color for normal days
+          //   },
+          // ),
+          // dayForegroundColor: WidgetStateProperty.resolveWith<Color?>(
+          //   (Set<WidgetState> states) {
+          //     if (states.contains(WidgetState.selected)) {
+          //       return Color(0xff121212); // Background color for selected day
+          //     } else if (states.contains(WidgetState.disabled)) {
+          //       return Colors
+          //           .grey.shade200; // Background color for disabled days
+          //     }
+          //     return Color(0xff89ED5B); // Default background color for normal days
+          //   },
+          // ),
+          // confirmButtonStyle: ButtonStyle(
+          //   textStyle: WidgetStatePropertyAll(TextStyle(color: Colors.white))
+          // ),
+          // headerForegroundColor: Colors.white, // Header text color
+        ),
       ),
-      home: const MyHomePage(title: 'دیت تایم پیکر فارسی'),
+      home: const HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  String label = 'انتخاب تاریخ زمان';
+class _HomePageState extends State<HomePage> {
+  String label = '';
 
-  void _showDateTimePicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '1398/03/20 19:50',
-          type: 'datetime',
-          color: Colors.redAccent,
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
-  }
+  String selectedDate = Jalali.now().toJalaliDateTime();
 
-  void _showDatePicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '1398/3/20',
-          disable: ['friday', '1398/3/21', '13985/3/21'],
-          type: 'date',
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  void _showYearPicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '1397',
-          type: 'year',
-          disable: ['1400', '1395'],
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  void _showMonthPicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '03',
-          disable: ['2', '03'],
-          type: 'month',
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  void _showTimePicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '19:50',
-          disable: ['20:50', '20:51', '20:55'],
-          type: 'time',
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
-  }
-
-  void _showRangeDatePicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext _) {
-        return PersianDateTimePicker(
-          initial: '1398/03/22#1399/03/25',
-          type: 'rangedate',
-          color: Colors.orangeAccent,
-          onSelect: (date) {
-            setState(() {
-              label = date;
-            });
-          },
-        );
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    label = 'انتخاب تاریخ زمان';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            widget.title,
-            style: const TextStyle(fontFamily: 'IS'),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          'دیت تایم پیکر فارسی',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            colors: [Colors.white, Color(0xffE4F5F9)],
           ),
         ),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: _showDateTimePicker,
-                child: const Text('تاریخ زمان'),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          physics: BouncingScrollPhysics(),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    imageButton(
+                      onTap: () async {
+                        Jalali? picked = await showPersianDatePicker(
+                          context: context,
+                          initialDate: Jalali.now(),
+                          firstDate: Jalali(1385, 8),
+                          lastDate: Jalali(1450, 9),
+                          initialEntryMode:
+                              PersianDatePickerEntryMode.calendarOnly,
+                          initialDatePickerMode: PersianDatePickerMode.year,
+                          holidayConfig: PersianHolidayConfig(
+                            weekendDays: {7}
+                          ),
+                        );
+                        if (picked != null &&
+                            picked.toJalaliDateTime() != selectedDate) {
+                          setState(() {
+                            label = picked.toJalaliDateTime();
+                          });
+                        }
+                      },
+                      image: '08',
+                    ),
+                    imageButton(
+                      onTap: () async {
+                        Jalali? pickedDate = await showModalBottomSheet<Jalali>(
+                          context: context,
+                          builder: (context) {
+                            Jalali? tempPickedDate;
+                            return SizedBox(
+                              height: 250,
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      CupertinoButton(
+                                        child: Text(
+                                          'لغو',
+                                          style: TextStyle(fontFamily: 'Dana'),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      CupertinoButton(
+                                        child: Text(
+                                          'تایید',
+                                          style: TextStyle(fontFamily: 'Dana'),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(
+                                            context,
+                                          ).pop(tempPickedDate ?? Jalali.now());
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(height: 0, thickness: 1),
+                                  Expanded(
+                                    child: CupertinoTheme(
+                                      data: CupertinoThemeData(
+                                        textTheme: CupertinoTextThemeData(
+                                          textStyle: TextStyle(
+                                            fontFamily: 'Dana',
+                                          ),
+                                          dateTimePickerTextStyle: TextStyle(
+                                            fontFamily: 'Dana',
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ),
+                                      child: PersianCupertinoDatePicker(
+                                        mode:
+                                            PersianCupertinoDatePickerMode.date,
+                                        dateOrder: DatePickerDateOrder.dmy,
+                                        onDateTimeChanged: (Jalali dateTime) {
+                                          tempPickedDate = dateTime;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+
+                        if (pickedDate != null) {
+                          setState(() {
+                            label = '${pickedDate.toDateTime()}';
+                          });
+                        }
+                      },
+                      image: '07',
+                    ),
+                    imageButton(
+                      onTap: () async {
+                        var picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                          initialEntryMode: TimePickerEntryMode.input,
+                          builder: (BuildContext context, Widget? child) {
+                            return Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: MediaQuery(
+                                data: MediaQuery.of(
+                                  context,
+                                ).copyWith(alwaysUse24HourFormat: true),
+                                child: child!,
+                              ),
+                            );
+                          },
+                        );
+                        setState(() {
+                          if (picked != null) label = picked.toString();
+                        });
+                      },
+                      image: '09',
+                    ),
+                    imageButton(
+                      onTap: () async {
+                        Jalali? pickedDate = await showModalBottomSheet<Jalali>(
+                          context: context,
+                          builder: (context) {
+                            Jalali? tempPickedDate;
+                            return SizedBox(
+                              height: 250,
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      CupertinoButton(
+                                        child: Text(
+                                          'لغو',
+                                          style: TextStyle(fontFamily: 'Dana'),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      CupertinoButton(
+                                        child: Text(
+                                          'تایید',
+                                          style: TextStyle(fontFamily: 'Dana'),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(
+                                            context,
+                                          ).pop(tempPickedDate ?? Jalali.now());
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  Divider(height: 0, thickness: 1),
+                                  Expanded(
+                                    child: PersianCupertinoDatePicker(
+                                      initialDateTime: Jalali.now(),
+                                      mode: PersianCupertinoDatePickerMode.time,
+                                      onDateTimeChanged: (Jalali dateTime) {
+                                        tempPickedDate = dateTime;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+
+                        if (pickedDate != null) {
+                          setState(() {
+                            label = pickedDate.toJalaliDateTime();
+                          });
+                        }
+                      },
+                      image: '05',
+                    ),
+                  ],
+                ),
               ),
-              ElevatedButton(
-                onPressed: _showDatePicker,
-                child: const Text('تاریخ '),
+              Expanded(
+                child: Column(
+                  children: [
+                    imageButton(
+                      onTap: () async {
+                        var picked = await showPersianDateRangePicker(
+                          context: context,
+                          initialDateRange: JalaliRange(
+                            start: Jalali(1400, 1, 2),
+                            end: Jalali(1400, 1, 10),
+                          ),
+                          firstDate: Jalali(1385, 8),
+                          lastDate: Jalali(1450, 9),
+                          initialDate: Jalali.now(),
+                        );
+                        setState(() {
+                          label =
+                              "${picked?.start.toJalaliDateTime() ?? ""} ${picked?.end.toJalaliDateTime() ?? ""}";
+                        });
+                      },
+                      image: '03',
+                    ),
+                    imageButton(
+                      onTap: () async {
+                        var picked = await showPersianDateRangePicker(
+                          context: context,
+                          initialEntryMode: PersianDatePickerEntryMode.input,
+                          initialDateRange: JalaliRange(
+                            start: Jalali(1400, 1, 2),
+                            end: Jalali(1400, 1, 10),
+                          ),
+                          firstDate: Jalali(1385, 8),
+                          lastDate: Jalali(1450, 9),
+                          initialDate: Jalali.now(),
+                        );
+                        setState(() {
+                          label =
+                              "${picked?.start.toJalaliDateTime() ?? ""} ${picked?.end.toJalaliDateTime() ?? ""}";
+                        });
+                      },
+                      image: '06',
+                    ),
+                  ],
+                ),
               ),
-              ElevatedButton(
-                onPressed: _showYearPicker,
-                child: const Text('سال '),
-              ),
-              ElevatedButton(
-                onPressed: _showMonthPicker,
-                child: const Text('ماه '),
-              ),
-              ElevatedButton(
-                onPressed: _showRangeDatePicker,
-                child: const Text('بازه تاریخ '),
-              ),
-              ElevatedButton(
-                onPressed: _showTimePicker,
-                child: const Text(' زمان'),
-              ),
-              Text(label)
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _showDatePicker,
-          tooltip: 'Increment',
-          child: const Icon(Icons.add),
+      ),
+      bottomNavigationBar: Container(
+        height: 70,
+        width: double.infinity,
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 3,
+              spreadRadius: 0,
+              offset: Offset(0, 4),
+              color: Color(0xff000000).withValues(alpha: 0.3),
+            ),
+          ],
+          color: Colors.white,
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall!.copyWith(color: Colors.black),
+            textAlign: TextAlign.center,
+          ),
         ),
       ),
+    );
+  }
+
+  Widget imageButton({required Function onTap, required String image}) {
+    return ScaleGesture(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 3,
+              spreadRadius: 0,
+              offset: Offset(0, 4),
+              color: Color(0xff000000).withValues(alpha: 0.3),
+            ),
+          ],
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        child: Image.asset('assets/images/$image.png', fit: BoxFit.fitWidth),
+      ),
+    );
+  }
+}
+
+class ScaleGesture extends StatefulWidget {
+  final Widget child;
+  final double scale;
+  final Function onTap;
+
+  const ScaleGesture({
+    super.key,
+    required this.child,
+    this.scale = 1.1,
+    required this.onTap,
+  });
+
+  @override
+  State<ScaleGesture> createState() => _ScaleGestureState();
+}
+
+class _ScaleGestureState extends State<ScaleGesture> {
+  late double scale;
+
+  @override
+  void initState() {
+    scale = 1;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (detail) {
+        setState(() {
+          scale = widget.scale;
+        });
+      },
+      onTapCancel: () {
+        setState(() {
+          scale = 1;
+        });
+      },
+      onTapUp: (datail) {
+        setState(() {
+          scale = 1;
+        });
+        widget.onTap();
+      },
+      child: Transform.scale(scale: scale, child: widget.child),
     );
   }
 }
