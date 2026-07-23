@@ -8,6 +8,10 @@
 .buildlog/
 .history
 .svn/
+<<<<<<< HEAD
+=======
+migrate_working_dir/
+>>>>>>> upstream/master
 
 # IntelliJ related
 *.iml
@@ -22,13 +26,21 @@
 
 # Flutter/Dart/Pub related
 **/doc/api/
+<<<<<<< HEAD
 .dart_tool/
 .flutter-plugins
 .packages
+=======
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+>>>>>>> upstream/master
 .pub-cache/
 .pub/
 /build/
 
+<<<<<<< HEAD
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
@@ -71,3 +83,15 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+=======
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+>>>>>>> upstream/master

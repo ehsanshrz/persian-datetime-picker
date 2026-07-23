@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 buildscript {
     ext.kotlin_version = '1.2.71'
     repositories {
@@ -19,13 +20,30 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+=======
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = "../build"
+>>>>>>> upstream/master
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
+<<<<<<< HEAD
     project.evaluationDependsOn(':app')
 }
 
 task clean(type: Delete) {
+=======
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+>>>>>>> upstream/master
     delete rootProject.buildDir
 }
